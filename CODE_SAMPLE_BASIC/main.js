@@ -13,16 +13,29 @@ document.addEventListener('DOMContentLoaded', init)
 function init(){
 	let optionsContainer=document.querySelector('#options-wrapper')
 	for(let i = 0; i< options.length; i++){
-		optionsContainer.innerHTML+= "<div class='unchosen option'><p class='text'>"+options[i]+"</p></div>"
+		optionsContainer.innerHTML+= "<button id='option"+i+"' class='unchosen option' onclick='toggleChoice("+i+")'><p class='text'>"+options[i]+"</p></button> </br>"
 	}
-	// ...
 }
 
 function toggleChoice(i){
-	states[i]=true
-	// ...
+	if(states[i]) {
+		deselectOption(i)
+	} else {
+		if(states.includes(true)) {
+			const index = states.findIndex(element => element == true)
+			deselectOption(index)
+		}
+		states[i] = true
+		let optionSelected=document.querySelector('#option' + i)
+		optionSelected.className='chosen option'
+	}
 }
 
+function deselectOption(i) {
+	states[i] = false
+	let optionSelected=document.querySelector('#option' + i)
+	optionSelected.className='unchosen option'
+}
 
 
 function myEvaluation(){
@@ -30,12 +43,12 @@ function myEvaluation(){
 	for(let i = 0; i<options.length; i++){
 		if(states[i] && i == correct_answer_index){
 			evMessage.innerHTML = '<p>Awesome!</p>'
-			// console.log('awesome')
+			console.log('awesome')
 			break
 		}
 		else{
 			evMessage.innerHTML = '<p>Keep trying!</p>'
-			// console.log('tryAgain')
+			console.log('tryAgain')
 			break
 		}
 	}

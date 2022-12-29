@@ -1,49 +1,55 @@
-// this is a basic connection schema to the corresponding data for the table provided.
-// this API KEY will expire after January 2022
-// Written by GSoosalu & ndr3svt
-const API_KEY = 'AIzaSyCfuQLHd0Aha7KuNvHK0p6V6R_0kKmsRX4';
-const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
-const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
-let exerciseIndex;
-let exerciseData;
-let options;
-let states = [];
-let correct_answer_index;
-let chosen_answer_index;
+// alert('js loaded!')
+// this is a basic structure for evaluation of a single choice exercise
+// INTENTIONALLY parts of the code have been deleted. 
+//  It should serve as a hint towards finding a suitable solution for single choice exercise
+// Written by GSoosalu ndr3svt
 
-function handleClientLoad() {
-	gapi.load('client', initClient);
+let options = ['this','this not', 'this either']
+let states = [false,false,false]
+let correct_answer_index= 0
+
+document.addEventListener('DOMContentLoaded', init)
+
+function init(){
+	let optionsContainer=document.querySelector('#options-wrapper')
+	for(let i = 0; i< options.length; i++){
+		optionsContainer.innerHTML+= "<button id='option"+i+"' class='unchosen option' onclick='toggleChoice("+i+")'><p class='text'>"+options[i]+"</p></button> </br>"
+	}
 }
 
-function initClient() {
-	gapi.client.init({
-	  apiKey: API_KEY,
-	  discoveryDocs: DISCOVERY_DOCS
-	}).then(function () {
-	  getExerciseData();
-	}, function(error) {
-	  console.log(JSON.stringify(error, null, 2));
-	});
+function toggleChoice(i){
+	if(states[i]) {
+		deselectOption(i)
+	} else {
+		if(states.includes(true)) {
+			const index = states.findIndex(element => element == true)
+			deselectOption(index)
+		}
+		states[i] = true
+		let optionSelected=document.querySelector('#option' + i)
+		optionSelected.className='chosen option'
+	}
 }
 
-function getExerciseData() {
-	gapi.client.sheets.spreadsheets.values.get({
-	  spreadsheetId: '1hzA42BEzt2lPvOAePP6RLLRZKggbg0RWuxSaEwd5xLc',
-	  range: 'Learning!A1:F10',
-	}).then(function(response) {
-		console.log(response);
-		console.log(response.result.values);
-	}, function(response) {
-		console.log('Error: ' + response.result.error.message);
-	});
-}
-
-function toggleChoice(index){
-	console.log('toggling choices function place holder')
+function deselectOption(i) {
+	states[i] = false
+	let optionSelected=document.querySelector('#option' + i)
+	optionSelected.className='unchosen option'
 }
 
 
 function myEvaluation(){
-	console.log('an evaluation function place holder')
+	let evMessage = document.querySelector('#evaluation-message')
+	for(let i = 0; i<options.length; i++){
+		if(states[i] && i == correct_answer_index){
+			evMessage.innerHTML = '<p>Awesome!</p>'
+			console.log('awesome')
+			break
+		}
+		else{
+			evMessage.innerHTML = '<p>Keep trying!</p>'
+			console.log('tryAgain')
+			break
+		}
+	}
 }
-
